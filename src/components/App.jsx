@@ -12,7 +12,7 @@ function App() {
   return (
     <div className='App'>
       <div>
-        <button
+        {/* <button
           aria-label="Increment value"
           onClick={() => dispatch(increment())}
         >
@@ -27,7 +27,7 @@ function App() {
         </button>
         <br />
         <button onClick={() => dispatch(incrementByAmount(42))}>Прибавить 42</button>
-        <br />
+        <br /> */}
         <button onClick={() => downloadPeople()}>Cкачать героев</button>
       </div>
     </div>

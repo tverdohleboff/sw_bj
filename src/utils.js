@@ -4,6 +4,7 @@ export async function downloadPeople() {
   let firstPageData;
   let max = 0;
   let min = 10e6;
+  const peopleMap = new Map();
 
   fetch(peopleUrl)
     .then((response) => response.json())
@@ -28,14 +29,16 @@ export async function downloadPeople() {
         key: index + 1,
         name: item.name,
         height: item.height === 'unknown' ? '1' : item.height,
-        mass: item.mass === 'unknown' ? '1' : item.mass.replace(/,/g, ""),
+        mass: item.mass === 'unknown' ? '1' :
+          item.mass === '1,358' ? '3.806' :
+            item.mass,
       }));
       return people;
     })
     .then((arrMH) => {
       const peopleMH = arrMH.map(el => ({
         ...el,
-        massXheight: (el.mass * el.height),
+        massXheight: Math.round(el.mass * el.height),
       }));
       return peopleMH;
     })
@@ -54,9 +57,22 @@ export async function downloadPeople() {
     .then((rArr) => {
       const peopleRes = rArr.map(el => ({
         ...el,
-        power: Math.round((10 / max) * el.massXheight),
+        power: el.massXheight === 666 ? 666 :
+          Math.round((10 / max) * el.massXheight),
       }));
       console.log(peopleRes);
       return peopleRes;
+    })
+    .then((yArr) => {
+      yArr.forEach(el => {
+        if (peopleMap.has(el.power)) {
+          const value = peopleMap.get(el.power) + 1;
+          peopleMap.set(el.power, value);
+        } else {
+          peopleMap.set(el.power, 1);
+        }
+      });
+      console.log(peopleMap);
+      return yArr;
     })
 }
