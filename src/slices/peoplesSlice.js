@@ -1,15 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  value: [],
+  people: [],
 };
 
 const peopleSlice = createSlice({
   name: 'people',
   initialState,
   reducers: {
-    save: (action) => {
-      state.value = action.payload;
+    save: (state, { payload }) => {
+      state = state.people.push(payload);
     },
   },
 });

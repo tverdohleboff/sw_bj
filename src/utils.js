@@ -1,10 +1,10 @@
 export async function downloadPeople() {
-
   const peopleUrl = 'https://swapi.dev/api/people';
   let firstPageData;
   let max = 0;
   let min = 10e6;
   const peopleMap = new Map();
+  let result;
 
   fetch(peopleUrl)
     .then((response) => response.json())
@@ -51,7 +51,6 @@ export async function downloadPeople() {
           min = el.massXheight;
         };
       })
-      console.log("max:", max, "min:", min);
       return sArr;
     })
     .then((rArr) => {
@@ -73,6 +72,8 @@ export async function downloadPeople() {
         }
       });
       console.log(peopleMap);
+      result = [...yArr];
       return yArr;
     })
-}
+  return result;
+};

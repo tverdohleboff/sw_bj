@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { decrement, increment, incrementByAmount } from '../slices/counterSlice';
+import { save } from '../slices/peoplesSlice';
 import { downloadPeople } from '../utils';
 import './App.css';
 
@@ -9,10 +10,16 @@ function App() {
   const count = useSelector((state) => state.counter.value);
   const dispatch = useDispatch();
 
+  async function savePeople() {
+    const ready = await downloadPeople();
+    console.log("ready", ready);
+    dispatch(save(999));
+  }
+
   return (
     <div className='App'>
       <div>
-        {/* <button
+        <button
           aria-label="Increment value"
           onClick={() => dispatch(increment())}
         >
@@ -26,9 +33,9 @@ function App() {
           Отнять
         </button>
         <br />
-        <button onClick={() => dispatch(incrementByAmount(42))}>Прибавить 42</button>
-        <br /> */}
-        <button onClick={() => downloadPeople()}>Cкачать героев</button>
+        <button onClick={() => dispatch(incrementByAmount(22))}>Прибавить 22</button>
+        <br />
+        <button onClick={() => savePeople()}>Cкачать героев</button>
       </div>
     </div>
   );
