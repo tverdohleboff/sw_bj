@@ -13,7 +13,7 @@ function App() {
   async function savePeople() {
     const ready = await downloadPeople();
     console.log("ready", ready);
-    dispatch(save(999));
+    dispatch(save(ready));
   }
 
   return (
