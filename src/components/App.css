@@ -10,10 +10,6 @@
   color: white;
 }
 
-.visible {
-  display: inline;
-}
-
 .invisible {
   display: none;
 }
@@ -36,6 +32,29 @@ button {
   width: 18rem;
   font-size: 4rem;
   line-height: 7rem;
+}
+
+.midText {
+  height: 6rem;
+  width: 14rem;
+  font-size: 3rem;
+  line-height: 5rem;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.game {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameTable {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 button:hover {

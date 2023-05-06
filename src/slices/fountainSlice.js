@@ -5,8 +5,8 @@ const initialState = {
   value: 0,
 };
 
-const counterSlice = createSlice({
-  name: 'counterPower',
+const fountainSlice = createSlice({
+  name: 'fountain',
   initialState,
   // Редьюсеры в слайсах мутируют состояние и ничего не возвращают наружу
   reducers: {
@@ -15,12 +15,15 @@ const counterSlice = createSlice({
       state.value = (action.payload.reduce((acc, item) =>
         acc + item.power, 0) / 900) * 100;
     },
+    devour: (state, { payload }) => {
+      state.value -= payload;
+    },
   },
 });
 
 // Слайс генерирует действия, которые экспортируются отдельно
 // Действия генерируются автоматически из имен ключей редьюсеров
-export const { calculatePower } = counterSlice.actions;
+export const { calculatePower, devour } = fountainSlice.actions;
 
 // По умолчанию экспортируется редьюсер, сгенерированный слайсом
-export default counterSlice.reducer;
+export default fountainSlice.reducer;

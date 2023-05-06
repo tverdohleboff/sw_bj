@@ -1,11 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../slices/counterSlice.js';
-import peopleReducer from '../slices/peoplesSlice.js'
+import fountainReducer from './fountainSlice.js';
+import peopleReducer from '../slices/peoplesSlice.js';
+import bluePowerReducer from '../slices/bluePower.js';
+import redPowerReducer from '../slices/redPower.js';
 
 export default configureStore({
   reducer: {
-    // counter – это свойство будет внутри объекта общего состояния: state.counter
-    counterPower: counterReducer,
+    fountain: fountainReducer,
     people: peopleReducer,
+    bluePower: bluePowerReducer,
+    redPower: redPowerReducer,
   },
 });
