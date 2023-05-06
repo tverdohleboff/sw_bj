@@ -6,26 +6,21 @@ const initialState = {
 };
 
 const counterSlice = createSlice({
-  name: 'counter',
+  name: 'counterPower',
   initialState,
   // Редьюсеры в слайсах мутируют состояние и ничего не возвращают наружу
   reducers: {
-    increment: (state) => {
-      state.value += 1;
-    },
-    decrement: (state) => {
-      state.value -= 1;
-    },
     // пример с данными
-    incrementByAmount: (state, action) => {
-      state.value += action.payload;
+    calculatePower: (state, action) => {
+      state.value = (action.payload.reduce((acc, item) =>
+        acc + item.power, 0) / 900) * 100;
     },
   },
 });
 
 // Слайс генерирует действия, которые экспортируются отдельно
 // Действия генерируются автоматически из имен ключей редьюсеров
-export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export const { calculatePower } = counterSlice.actions;
 
 // По умолчанию экспортируется редьюсер, сгенерированный слайсом
 export default counterSlice.reducer;
