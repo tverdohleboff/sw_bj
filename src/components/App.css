@@ -1,7 +1,49 @@
 .App {
-  margin-top: 150px;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: rgb(242, 231, 255);
+  transition: all 500ms ease;
+}
+
+.visible {
+  display: inline;
+}
+
+.invisible {
+  display: none;
+}
+
+button {
+  height: 42px;
+  border: none;
+  background: rgb(199, 149, 255);
+  color: #ffffff;
+  padding: 10px;
+  font-size: 18px;
+  border-radius: 9rem;
+  box-sizing: border-box;
+  transition: all 500ms ease;
+  box-shadow: inset 0 0 0 3px #b5eeff;
+}
+
+.bigText {
+  height: 9rem;
+  width: 18rem;
+  font-size: 4rem;
+  line-height: 7rem;
+}
+
+button:hover {
+  background: rgb(255, 163, 228);
+  color: #f24291;
+  box-shadow: inset 0 0 0 3px #f0ff90;
+  cursor: pointer;
+}
+
+.purple {
+  background-color: rgb(248, 124, 248);
 }
