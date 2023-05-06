@@ -11,22 +11,29 @@ function App() {
   const dispatch = useDispatch();
 
   async function savePeople() {
+    switchToReady();
     const ready = await downloadPeople();
     console.log(ready);
     dispatch(save(ready));
     dispatch(calculatePower(ready));
-    switchToReady();
+    weAreReady();
   }
 
   const switchToReady = () => {
     document.querySelector('.downloadButton').classList.remove('visible');
     document.querySelector('.downloadButton').classList.add('invisible');
+    document.querySelector('.loader').classList.remove('invisible');
     document.querySelector('.App').classList.add('purple');
+  }
+
+  const weAreReady = () => {
     document.querySelector('.counterPower').classList.remove('invisible');
+    document.querySelector('.loader').classList.add('invisible');
   }
 
   return (
     <div className='App'>
+      <div className="loader invisible"></div>
       <div>
         <h1 className='hReady invisible'>Ready!</h1>
         <span className='counterPower bigText invisible'>{count} %</span>
