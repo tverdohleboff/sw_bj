@@ -60,3 +60,58 @@ export async function downloadPeople() {
   result = [...peopleRes];
   return result;
 };
+
+export async function flickerPlayer(steps) {
+  let count = steps;
+  const blue = document.querySelector('#playerBlue');
+  const red = document.querySelector('#playerRed');
+
+  do {
+    await new Promise(resolve => setTimeout(resolve, 360));
+    blue.classList.add('greyColored');
+    red.classList.remove('greyColored');
+    await new Promise(resolve => setTimeout(resolve, 360));
+    blue.classList.remove('greyColored');
+    red.classList.add('greyColored');
+    count--;
+  } while (count !== 0);
+
+  blue.classList.add('greyColored');
+  red.classList.add('greyColored');
+
+  if (steps % 2) {
+    blue.classList.remove('disable');
+    blue.classList.remove('greyColored');
+  } else {
+    red.classList.remove('disable');
+    red.classList.remove('greyColored');
+  }
+  document.querySelector('#stop').classList.remove('disable');
+  document.querySelector('#stop').classList.remove('greyColored');
+  document.querySelector('#stop').classList.remove('greyColored');
+}
+
+export function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export function winners(player) {
+  document.querySelector('#Jabba').style.display = 'inline';
+  document.querySelector('#stop').classList.add('disable');
+  document.querySelector('#stop').classList.add('greyColored');
+  document.querySelector('#playerBlue').classList.add('disable');
+  document.querySelector('#playerBlue').classList.add('greyColored');
+  document.querySelector('#playerRed').classList.add('disable');
+  document.querySelector('#playerRed').classList.add('greyColored');
+  if (player === 'blue') {
+    document.querySelector('#mainTitle').textContent = `You lucky and take Jabba.
+    Blue WINS!`;
+    document.querySelector('.App').classList.add('sameBlue');
+  } else {
+    document.querySelector('#mainTitle').textContent = `You lucky and take Jabba.
+    RED WINS!`;
+    document.querySelector('.App').classList.add('sameRed');
+  }
+}

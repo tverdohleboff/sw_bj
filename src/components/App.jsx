@@ -1,10 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { save } from '../slices/peoplesSlice';
-import { calculatePower, devour } from '../slices/fountainSlice.js';
-import { blueDecrement } from '../slices/bluePower.js';
-import { redDecrement } from '../slices/redPower.js';
-import { downloadPeople } from '../utils';
+import {
+  calculatePower,
+  devour,
+  decrementCount,
+  decrementRound,
+} from '../slices/fountainSlice.js';
+import {
+  blueDecrement,
+  blueRoundValueToAll,
+  blueRoundValueIsOne,
+} from '../slices/bluePower.js';
+import {
+  redDecrement,
+  redRoundValueToAll,
+  redRoundValueIsOne,
+} from '../slices/redPower.js';
+import {
+  downloadPeople,
+  flickerPlayer,
+  getRandomIntInclusive,
+  winners,
+} from '../utils';
+import Jabba from '../Jabba.webp';
 import './App.css';
 
 function App() {
@@ -17,6 +36,15 @@ function App() {
   const blueCount = useSelector((state) => state.bluePower.value);
   const redCount = useSelector((state) => state.redPower.value);
 
+  const blueRoundValue = useSelector((state) => state.bluePower.roundValue);
+  const redRoundValue = useSelector((state) => state.redPower.roundValue);
+
+  const nowKeys = useSelector(({ fountain }) => fountain.keys);
+  const lengthPowerArr = useSelector((state) => state.fountain.keys.length);
+
+  const countCount = useSelector(({ fountain }) => fountain.count);
+  const countRound = useSelector(({ fountain }) => fountain.round);
+
   const switchToReady = () => {
     document.querySelector('.downloadButton').style.display = "none";
     document.querySelector('.loader').style.display = "inline";
@@ -28,11 +56,11 @@ function App() {
     document.querySelector('.game').style.display = "flex";
   }
 
-  function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+  useEffect(() => {
+    if (countCount === 2) {
+      dispatch(decrementRound());
+    }
+  }, [countCount]);
 
   async function savePeople() {
     switchToReady();
@@ -49,8 +77,36 @@ function App() {
     dispatch(calculatePower(fountainArr));
   }
 
-  const nowKeys = useSelector(({ fountain }) => fountain.keys);
-  const lengthPowerArr = useSelector((state) => state.fountain.keys.length);
+  useEffect(() => {
+    if (blueRoundValue > 21) {
+      dispatch(blueRoundValueIsOne());
+      document.querySelector('#playerBlue').disabled = true;
+    }
+    if (redRoundValue > 21) {
+      dispatch(redRoundValueIsOne());
+      document.querySelector('#playerRed').disabled = true;
+    }
+  }, [blueRoundValue, redRoundValue]);
+
+  useEffect(() => {
+    if (blueRoundValue >= 666) {
+      winners('blue');
+    }
+    if (redRoundValue >= 666) {
+      winners('red');
+    }
+  }, [blueRoundValue, redRoundValue]);
+
+  useEffect(() => {
+    if (blueCount >= 63) {
+      alert('Blue WINS!');
+      winners();
+    }
+    if (redCount >= 63) {
+      winners();
+      alert('RED WINS!');
+    }
+  }, [blueCount, redCount]);
 
   async function handlePoke({ target }) {
     console.log(target.innerHTML);
@@ -68,36 +124,6 @@ function App() {
     dispatch(devour(index));
   }
 
-  async function flickerPlayer(steps) {
-    let count = steps;
-    const blue = document.querySelector('#playerBlue');
-    const red = document.querySelector('#playerRed');
-
-    do {
-      await new Promise(resolve => setTimeout(resolve, 400));
-      blue.classList.add('greyColored');
-      red.classList.remove('greyColored');
-      await new Promise(resolve => setTimeout(resolve, 400));
-      blue.classList.remove('greyColored');
-      red.classList.add('greyColored');
-      count--;
-    } while (count !== 0);
-
-    blue.classList.add('greyColored');
-    red.classList.add('greyColored');
-
-    if (steps % 2) {
-      blue.classList.remove('disable');
-      blue.classList.remove('greyColored');
-    } else {
-      red.classList.remove('disable');
-      red.classList.remove('greyColored');
-    }
-    document.querySelector('#stop').classList.remove('disable');
-    document.querySelector('#stop').classList.remove('greyColored');
-    document.querySelector('#stop').classList.remove('greyColored');
-  }
-
   function switchPlayer() {
     const blue = document.querySelector('#playerBlue');
     const red = document.querySelector('#playerRed');
@@ -106,11 +132,10 @@ function App() {
     blue.classList.toggle('greyColored');
     red.classList.toggle('disable');
     red.classList.toggle('greyColored');
-
   }
 
   async function randominaze() {
-    const steps = getRandomIntInclusive(6, 12);
+    const steps = getRandomIntInclusive(3, 6);
     console.log("steps", steps);
     if (steps % 2) {
       document.querySelector('#playerBlue').classList.remove('greyColored');
@@ -122,6 +147,11 @@ function App() {
 
   function handleStop() {
     switchPlayer();
+    dispatch(blueRoundValueToAll());
+    dispatch(redRoundValueToAll());
+    document.querySelector('#playerBlue').disabled = false;
+    document.querySelector('#playerRed').disabled = false;
+    dispatch(decrementCount());
   }
 
   async function handleStart() {
@@ -136,7 +166,7 @@ function App() {
       <div className='start'>
         <div className="loader"></div>
         <button
-          className='downloadButton button bigText visible'
+          className='downloadButton button bigText'
           onClick={() => savePeople()}
         >Game
         </button>
@@ -145,9 +175,16 @@ function App() {
         <h2
           id='mainTitle'
           className='mainTitle'
-        >ROUND ONE</h2>
+        >ROUND {countRound}</h2>
         <div className='gameTable'>
-          <span className='bluePower midText textCenter'>{blueCount}</span>
+          <div id='Jabba'
+            className='wrapper Jabba'>
+            <img src={Jabba} alt='Jabba' />
+          </div>
+          <div className='playerValues'>
+            <span className='bluePower midText textCenter'>{blueCount}</span>
+            <span className='bluePower midText textCenter'>{blueRoundValue}</span>
+          </div>
           <button
             id='playerBlue'
             className='button midText disable greyColored'
@@ -161,7 +198,10 @@ function App() {
             onClick={(event) => handlePoke(event)}
           >Red
           </button>
-          <span className='redPower midText textCenter'>{redCount}</span>
+          <div className='playerValues'>
+            <span className='redPower midText textCenter'>{redCount}</span>
+            <span className='redPower midText textCenter'>{redRoundValue}</span>
+          </div>
         </div>
         <button
           id='stop'
