@@ -48,9 +48,6 @@ export async function downloadPeople() {
       Math.round((10 / max) * el.massXheight),
   }));
 
-  const keyArr = peopleRes.map(item => item.key);
-  console.log("keyArr", keyArr);
-
   peopleRes.forEach(el => {
     if (peopleMap.has(el.power)) {
       const value = peopleMap.get(el.power) + 1;
