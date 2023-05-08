@@ -51,7 +51,7 @@ function App() {
 
   const weAreReady = () => {
     document.querySelector('#load').style.display = "none";
-    document.querySelector('.game').style.display = "flex";
+    document.querySelector('#game').style.display = "flex";
   }
 
   const checkerByPowerLength = () => {
@@ -189,7 +189,8 @@ function App() {
         >Game
         </button>
       </div>
-      <div className='game'>
+      <div id='game'
+        className='game'>
         <h2
           id='mainTitle'
           className='mainTitle'
