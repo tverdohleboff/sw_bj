@@ -18,6 +18,14 @@
   background-color: rgb(255, 60, 96) !important;
 }
 
+.sameGreen {
+  background-color: rgb(94, 255, 105) !important;
+}
+
+.sameWin {
+  background-color: rgb(255, 255, 151) !important;
+}
+
 #Jabba {
   display: none;
   position: absolute;

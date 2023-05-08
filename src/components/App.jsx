@@ -1,12 +1,8 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { save } from '../slices/peoplesSlice';
-import {
-  calculatePower,
-  devour,
-  decrementCount,
-  decrementRound,
-} from '../slices/fountainSlice.js';
+import { calculatePower, devour } from '../slices/fountainSlice.js';
+import { decrementCount, decrementRound } from '../slices/roundSlice';
 import {
   blueDecrement,
   blueRoundValueToAll,
@@ -22,19 +18,21 @@ import {
   flickerPlayer,
   getRandomIntInclusive,
   winners,
+  blocker,
+  winnerByPoints,
 } from '../utils';
 import Jabba from '../Jabba.webp';
 import './App.css';
 
 function App() {
   const dispatch = useDispatch();
-  const count = useSelector((state) => {
+  const powerStorage = useSelector((state) => {
     const result = state.fountain.keys.reduce(
       (accumulator, currentValue) => accumulator + currentValue, 0);
     return result;
   });
-  const blueCount = useSelector((state) => state.bluePower.value);
-  const redCount = useSelector((state) => state.redPower.value);
+  const blueValue = useSelector((state) => state.bluePower.value);
+  const redValue = useSelector((state) => state.redPower.value);
 
   const blueRoundValue = useSelector((state) => state.bluePower.roundValue);
   const redRoundValue = useSelector((state) => state.redPower.roundValue);
@@ -42,8 +40,8 @@ function App() {
   const nowKeys = useSelector(({ fountain }) => fountain.keys);
   const lengthPowerArr = useSelector((state) => state.fountain.keys.length);
 
-  const countCount = useSelector(({ fountain }) => fountain.count);
-  const countRound = useSelector(({ fountain }) => fountain.round);
+  const countForRounds = useSelector(({ round }) => round.count);
+  const round = useSelector(({ round }) => round.round);
 
   const switchToReady = () => {
     document.querySelector('.downloadButton').style.display = "none";
@@ -56,11 +54,20 @@ function App() {
     document.querySelector('.game').style.display = "flex";
   }
 
+  const checkerByPowerLength = () => {
+    if (lengthPowerArr === 0) {
+      blocker();
+      dispatch(blueRoundValueToAll());
+      dispatch(redRoundValueToAll());
+      winnerByPoints(blueValue, redValue);
+    }
+  }
+
   useEffect(() => {
-    if (countCount === 2) {
+    if (countForRounds === 2) {
       dispatch(decrementRound());
     }
-  }, [countCount]);
+  }, [countForRounds]);
 
   async function savePeople() {
     switchToReady();
@@ -89,24 +96,26 @@ function App() {
   }, [blueRoundValue, redRoundValue]);
 
   useEffect(() => {
-    if (blueRoundValue >= 666) {
+    if (blueValue >= 63) {
+      blocker();
       winners('blue');
     }
-    if (redRoundValue >= 666) {
+    if (redValue >= 63) {
+      blocker();
       winners('red');
     }
-  }, [blueRoundValue, redRoundValue]);
+  }, [blueValue, redValue]);
 
   useEffect(() => {
-    if (blueCount >= 63) {
-      alert('Blue WINS!');
-      winners();
+    if (blueRoundValue >= 666) {
+      blocker();
+      winners('blueJabba');
     }
-    if (redCount >= 63) {
-      winners();
-      alert('RED WINS!');
+    if (redRoundValue >= 666) {
+      blocker();
+      winners('redJabba');
     }
-  }, [blueCount, redCount]);
+  }, [blueRoundValue, redRoundValue]);
 
   async function handlePoke({ target }) {
     console.log(target.innerHTML);
@@ -122,6 +131,7 @@ function App() {
       dispatch(redDecrement(currentPower));
     }
     dispatch(devour(index));
+    checkerByPowerLength();
   }
 
   function switchPlayer() {
@@ -175,14 +185,14 @@ function App() {
         <h2
           id='mainTitle'
           className='mainTitle'
-        >ROUND {countRound}</h2>
+        >ROUND {round}</h2>
         <div className='gameTable'>
           <div id='Jabba'
             className='wrapper Jabba'>
             <img src={Jabba} alt='Jabba' />
           </div>
           <div className='playerValues'>
-            <span className='bluePower midText textCenter'>{blueCount}</span>
+            <span className='bluePower midText textCenter'>{blueValue}</span>
             <span className='bluePower midText textCenter'>{blueRoundValue}</span>
           </div>
           <button
@@ -191,7 +201,7 @@ function App() {
             onClick={(event) => handlePoke(event)}
           >Blue
           </button>
-          <span className='counterPower midText textCenter'>{count}</span>
+          <span className='counterPower midText textCenter'>{powerStorage}</span>
           <button
             id='playerRed'
             className='button midText disable greyColored'
@@ -199,7 +209,7 @@ function App() {
           >Red
           </button>
           <div className='playerValues'>
-            <span className='redPower midText textCenter'>{redCount}</span>
+            <span className='redPower midText textCenter'>{redValue}</span>
             <span className='redPower midText textCenter'>{redRoundValue}</span>
           </div>
         </div>

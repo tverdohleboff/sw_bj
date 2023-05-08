@@ -3,6 +3,7 @@ import fountainReducer from './fountainSlice.js';
 import peopleReducer from '../slices/peoplesSlice.js';
 import bluePowerReducer from '../slices/bluePower.js';
 import redPowerReducer from '../slices/redPower.js';
+import roundReducer from '../slices/roundSlice.js'
 
 export default configureStore({
   reducer: {
@@ -10,5 +11,6 @@ export default configureStore({
     people: peopleReducer,
     bluePower: bluePowerReducer,
     redPower: redPowerReducer,
+    round: roundReducer,
   },
 });
