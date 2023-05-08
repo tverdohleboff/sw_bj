@@ -44,13 +44,13 @@ function App() {
   const round = useSelector(({ round }) => round.round);
 
   const switchToReady = () => {
+    document.querySelector('.App').classList.add('sameBlack');
     document.querySelector('.downloadButton').style.display = "none";
-    document.querySelector('.loader').style.display = "inline";
-    document.querySelector('.App').classList.add('purple');
+    document.querySelector('#load').style.display = "inline";
   }
 
   const weAreReady = () => {
-    document.querySelector('.loader').style.display = "none";
+    document.querySelector('#load').style.display = "none";
     document.querySelector('.game').style.display = "flex";
   }
 
@@ -174,7 +174,15 @@ function App() {
   return (
     <div className='App'>
       <div className='start'>
-        <div className="loader"></div>
+        <div id="load">
+          <div>G</div>
+          <div>N</div>
+          <div>I</div>
+          <div>D</div>
+          <div>A</div>
+          <div>O</div>
+          <div>L</div>
+        </div>
         <button
           className='downloadButton button bigText'
           onClick={() => savePeople()}
