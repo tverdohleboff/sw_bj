@@ -86,9 +86,9 @@ export async function flickerPlayer(steps) {
     red.classList.remove('disable');
     red.classList.remove('greyColored');
   }
-  document.querySelector('#stop').classList.remove('disable');
-  document.querySelector('#stop').classList.remove('greyColored');
-  document.querySelector('#stop').classList.remove('greyColored');
+  document.querySelector('#stopButton').classList.remove('disable');
+  document.querySelector('#stopButton').classList.remove('greyColored');
+  document.querySelector('#stopButton').classList.remove('greyColored');
 }
 
 export function getRandomIntInclusive(min, max) {
@@ -98,8 +98,8 @@ export function getRandomIntInclusive(min, max) {
 }
 
 export function blocker() {
-  document.querySelector('#stop').classList.add('disable');
-  document.querySelector('#stop').classList.add('greyColored');
+  document.querySelector('#stopButton').classList.add('disable');
+  document.querySelector('#stopButton').classList.add('greyColored');
   document.querySelector('#playerBlue').classList.add('disable');
   document.querySelector('#playerBlue').classList.add('greyColored');
   document.querySelector('#playerRed').classList.add('disable');
@@ -107,45 +107,49 @@ export function blocker() {
 }
 
 export function winners(player) {
+  document.querySelector("#win").style.display = "flex";
+  document.querySelector("#game").style.display = "none";
   switch (player) {
     case 'blue':
-      document.querySelector('#mainTitle').textContent = `Blue WINS!`;
+      document.querySelector('#winTitle').textContent = `Blue WINS!`;
       document.querySelector('.App').classList.add('sameBlue');
       break;
     case 'red':
-      document.querySelector('#mainTitle').textContent = `RED WINS!`;
+      document.querySelector('#winTitle').textContent = `RED WINS!`;
       document.querySelector('.App').classList.add('sameRed');
       break;
     case 'blueJabba':
       document.querySelector('#Jabba').style.display = 'inline';
-      document.querySelector('#mainTitle').textContent = `You lucky and take Jabba.
+      document.querySelector('#winTitle').textContent = `You lucky and take Jabba.
       Blue WINS!`;
       document.querySelector('.App').classList.add('sameBlue');
       break;
     case 'redJabba':
       document.querySelector('#Jabba').style.display = 'inline';
-      document.querySelector('#mainTitle').textContent = `You lucky and take Jabba.
+      document.querySelector('#winTitle').textContent = `You lucky and take Jabba.
     RED WINS!`;
       document.querySelector('.App').classList.add('sameRed');
       break;
     default:
-      document.querySelector('#mainTitle').textContent = `You WIN, but how?!`;
+      document.querySelector('#winTitle').textContent = `You WIN, but how?!`;
       document.querySelector('.App').classList.add('sameWin');
   }
 }
 
 export function winnerByPoints(blueValue, redValue) {
+  document.querySelector("#win").style.display = "inline";
+  document.querySelector("#game").style.display = "none";
   if (blueValue > redValue) {
-    document.querySelector('#mainTitle').textContent = `Blue WINS!`;
+    document.querySelector('#winTitle').textContent = `Blue WINS!`;
     document.querySelector('.App').classList.add('sameBlue');
   } else if (redValue > blueValue) {
-    document.querySelector('#mainTitle').textContent = `RED WINS!`;
+    document.querySelector('#winTitle').textContent = `RED WINS!`;
     document.querySelector('.App').classList.add('sameRed');
   } else if (blueValue === redValue) {
-    document.querySelector('#mainTitle').textContent = `FRIENDSHIPS!`;
+    document.querySelector('#winTitle').textContent = `FRIENDSHIPS!`;
     document.querySelector('.App').classList.add('sameGreen');
   } else {
-    document.querySelector('#mainTitle').textContent = `Impossible! You WIN!`;
+    document.querySelector('#winTitle').textContent = `Impossible! You WIN!`;
     document.querySelector('.App').classList.add('sameWin');
   }
 }

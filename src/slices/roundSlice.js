@@ -16,7 +16,7 @@ const roundSlice = createSlice({
     },
     decrementRound: (state) => {
       state.round += 1
-      state.count += 0;
+      state.count = 0;
     },
   },
 });

@@ -37,7 +37,7 @@
 #Jabba {
   display: none;
   position: absolute;
-  top: 38%;
+  top: 27%;
   right: 40%;
   overflow: hidden;
   height: 480px;
@@ -46,6 +46,13 @@
   border: 3px solid #ff00d9;
   background-color: rgb(233, 255, 244);
 }
+
+.win {
+  display: none;
+  flex-direction: column;
+  align-content: center;
+}
+
 
 .Jabba img {
   object-fit: cover;
@@ -59,6 +66,13 @@
 }
 
 .mainTitle {
+  text-align: center;
+  margin: 0;
+  font-size: 4rem;
+}
+
+.winTitle {
+  text-align: center;
   margin: 0;
   font-size: 4rem;
 }
@@ -94,11 +108,11 @@ button {
   text-align: center;
 }
 
-#stop {
+#stopButton {
   display: none;
 }
 
-.game {
+#game {
   display: none;
   flex-direction: column;
   align-items: center;
@@ -128,22 +142,12 @@ button:hover {
   pointer-events: none;
 }
 
-.loader {
-  display: none;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 1;
-  width: 150px;
-  height: 150px;
-  margin: -75px 0 0 -75px;
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid #3498db;
-  width: 120px;
-  height: 120px;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
+.soundButtons {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: row;
+  gap: 600px;
+  justify-content: space-around;
 }
 
 /* Safari */

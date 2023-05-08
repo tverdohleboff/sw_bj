@@ -22,6 +22,7 @@ import {
   winnerByPoints,
 } from '../utils';
 import Jabba from '../Jabba.webp';
+import MainTitle from '../MainTitle.ogg';
 import './App.css';
 
 function App() {
@@ -60,11 +61,12 @@ function App() {
       dispatch(blueRoundValueToAll());
       dispatch(redRoundValueToAll());
       winnerByPoints(blueValue, redValue);
+      playAudio();
     }
   }
 
   useEffect(() => {
-    if (countForRounds === 2) {
+    if (countForRounds >= 2) {
       dispatch(decrementRound());
     }
   }, [countForRounds]);
@@ -99,10 +101,12 @@ function App() {
     if (blueValue >= 63) {
       blocker();
       winners('blue');
+      playAudio();
     }
     if (redValue >= 63) {
       blocker();
       winners('red');
+      playAudio();
     }
   }, [blueValue, redValue]);
 
@@ -110,10 +114,12 @@ function App() {
     if (blueRoundValue >= 666) {
       blocker();
       winners('blueJabba');
+      playAudio();
     }
     if (redRoundValue >= 666) {
       blocker();
       winners('redJabba');
+      playAudio();
     }
   }, [blueRoundValue, redRoundValue]);
 
@@ -165,15 +171,26 @@ function App() {
   }
 
   async function handleStart() {
-    document.querySelector('#start').classList.add('disable');
+    document.querySelector('#startButton').classList.add('disable');
     await randominaze();
-    document.querySelector('#start').style.display = 'none';
-    document.querySelector('#stop').style.display = 'inline';
+    document.querySelector('#startButton').style.display = 'none';
+    document.querySelector('#stopButton').style.display = 'inline';
+  }
+
+  const audio = document.querySelector("#myAudio");
+
+  function playAudio() {
+    audio.play();
+  }
+
+  function pauseAudio() {
+    audio.pause();
   }
 
   return (
     <div className='App'>
-      <div className='start'>
+      <div id='start'
+        className='start'>
         <div id="load">
           <div>G</div>
           <div>N</div>
@@ -183,6 +200,9 @@ function App() {
           <div>O</div>
           <div>L</div>
         </div>
+        <audio id="myAudio">
+          <source src={MainTitle} type="audio/ogg" />
+        </audio>
         <button
           className='downloadButton button bigText'
           onClick={() => savePeople()}
@@ -223,19 +243,33 @@ function App() {
           </div>
         </div>
         <button
-          id='stop'
+          id='stopButton'
           className='button midText disable greyColored'
           onClick={() => (handleStop())}
         >Stop
         </button>
         <button
-          id='start'
+          id='startButton'
           className='button midText'
           onClick={() => (handleStart())}
         >Start
         </button>
+
       </div>
-    </div>
+      <div id='win'
+        className='win'>
+        <h2
+          id='winTitle'
+          className='winTitle'
+        ></h2>
+        <div
+          id='soundButtons'
+          className='soundButtons'>
+          <button onClick={() => (playAudio())} type="button">Play Audio</button>
+          <button onClick={() => (pauseAudio())} type="button">Pause Audio</button>
+        </div>
+      </div>
+    </div >
   );
 }
 
