@@ -140,7 +140,7 @@ function App() {
     checkerByPowerLength();
   }
 
-  function switchPlayer() {
+  const switchPlayer = () => {
     const blue = document.querySelector('#playerBlue');
     const red = document.querySelector('#playerRed');
 
@@ -161,7 +161,7 @@ function App() {
     flickerPlayer(steps);
   }
 
-  function handleStop() {
+  const handleStop = () => {
     switchPlayer();
     dispatch(blueRoundValueToAll());
     dispatch(redRoundValueToAll());
@@ -179,11 +179,11 @@ function App() {
 
   const audio = document.querySelector("#myAudio");
 
-  function playAudio() {
+  const playAudio = () => {
     audio.play();
   }
 
-  function pauseAudio() {
+  const pauseAudio = () => {
     audio.pause();
   }
 
