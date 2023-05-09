@@ -216,10 +216,6 @@ function App() {
           className='mainTitle'
         >ROUND {round}</h2>
         <div className='gameTable'>
-          <div id='Jabba'
-            className='wrapper Jabba'>
-            <img src={Jabba} alt='Jabba' />
-          </div>
           <div className='playerValues'>
             <span className='bluePower midText textCenter'>{blueValue}</span>
             <span className='bluePower midText textCenter'>{blueRoundValue}</span>
@@ -262,6 +258,12 @@ function App() {
           id='winTitle'
           className='winTitle'
         ></h2>
+        <div id='containerJabba'>
+          <div id='Jabba'
+            className='wrapper Jabba'>
+            <img src={Jabba} alt='Jabba' />
+          </div>
+        </div>
         <div
           id='soundButtons'
           className='soundButtons'>

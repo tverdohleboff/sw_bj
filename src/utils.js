@@ -119,13 +119,13 @@ export function winners(player) {
       document.querySelector('.App').classList.add('sameRed');
       break;
     case 'blueJabba':
-      document.querySelector('#Jabba').style.display = 'inline';
+      document.querySelector('#containerJabba').style.display = 'flex';
       document.querySelector('#winTitle').textContent = `You lucky and take Jabba.
       Blue WINS!`;
       document.querySelector('.App').classList.add('sameBlue');
       break;
     case 'redJabba':
-      document.querySelector('#Jabba').style.display = 'inline';
+      document.querySelector('#containerJabba').style.display = 'flex';
       document.querySelector('#winTitle').textContent = `You lucky and take Jabba.
     RED WINS!`;
       document.querySelector('.App').classList.add('sameRed');
