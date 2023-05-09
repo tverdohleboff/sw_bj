@@ -16,6 +16,7 @@ import {
 import {
   getFromSessionStorage,
   syncWithSessionStorage,
+  checkByDownloadPeople,
   downloadPeople,
   flickerPlayer,
   getRandomIntInclusive,
@@ -49,11 +50,10 @@ function App() {
   const countForRounds = useSelector(({ round }) => round.count);
   const round = useSelector(({ round }) => round.round);
 
-  window.onload = function () {
+  const checkByDownloadPeople = () => {
     const charactersFromSessionStorage = getFromSessionStorage('characters');
     if (charactersFromSessionStorage && charactersFromSessionStorage.length > 0) {
       if (charactersFromSessionStorage.length === characters.length) {
-        console.log('все уже загружено');
       } else {
         dispatch(save(charactersFromSessionStorage));
       }
@@ -61,6 +61,19 @@ function App() {
       calcStartFountainValues(charactersFromSessionStorage);
       weAreReady();
     }
+  }
+
+  const isGameEnd = () => {
+    const status = getFromSessionStorage('statusGame');
+    if (status === 'done') {
+      return;
+    }
+    //reparoGame();
+  }
+
+  window.onload = function () {
+    checkByDownloadPeople();
+    isGameEnd();
   }
 
   const switchToReady = () => {
@@ -107,28 +120,44 @@ function App() {
   }
 
   useEffect(() => {
+    syncWithSessionStorage('nowKeys', nowKeys);
+  }, [nowKeys]);
+
+  useEffect(() => {
+    syncWithSessionStorage('blueRoundValue', blueRoundValue);
     if (blueRoundValue > 21) {
       dispatch(blueRoundValueIsOne());
       document.querySelector('#playerBlue').disabled = true;
+      syncWithSessionStorage('isBlueDisabled', document.querySelector('#playerBlue').disabled);
     }
+  }, [blueRoundValue]);
+
+  useEffect(() => {
+    syncWithSessionStorage('redRoundValue', redRoundValue);
     if (redRoundValue > 21) {
       dispatch(redRoundValueIsOne());
       document.querySelector('#playerRed').disabled = true;
+      syncWithSessionStorage('isRedDisabled', document.querySelector('#playerRed').disabled);
     }
-  }, [blueRoundValue, redRoundValue]);
+  }, [redRoundValue]);
 
   useEffect(() => {
+    syncWithSessionStorage('blueValue', blueValue);
     if (blueValue >= 63) {
       blocker();
       winners('blue');
       playAudio();
     }
+  }, [blueValue]);
+
+  useEffect(() => {
+    syncWithSessionStorage('redValue', redValue);
     if (redValue >= 63) {
       blocker();
       winners('red');
       playAudio();
     }
-  }, [blueValue, redValue]);
+  }, [redValue]);
 
   useEffect(() => {
     if (blueRoundValue >= 666) {
@@ -158,6 +187,7 @@ function App() {
     }
     dispatch(devour(index));
     checkerByPowerLength();
+    syncWithSessionStorage('statusGame', target.innerHTML);
   }
 
   const switchPlayer = () => {
@@ -188,6 +218,8 @@ function App() {
     document.querySelector('#playerBlue').disabled = false;
     document.querySelector('#playerRed').disabled = false;
     dispatch(decrementCount());
+    syncWithSessionStorage('isBlueDisabled', document.querySelector('#playerBlue').disabled);
+    syncWithSessionStorage('isRedDisabled', document.querySelector('#playerRed').disabled);
   }
 
   async function handleStart() {

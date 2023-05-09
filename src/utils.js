@@ -143,6 +143,7 @@ export function winners(player) {
       document.querySelector('#winTitle').textContent = `You WIN, but how?!`;
       document.querySelector('.App').classList.add('sameWin');
   }
+  syncWithSessionStorage('statusGame', 'done');
 }
 
 export function winnerByPoints(blueValue, redValue) {
@@ -161,4 +162,5 @@ export function winnerByPoints(blueValue, redValue) {
     document.querySelector('#winTitle').textContent = `Impossible! You WIN!`;
     document.querySelector('.App').classList.add('sameWin');
   }
+  syncWithSessionStorage('statusGame', 'done');
 }
