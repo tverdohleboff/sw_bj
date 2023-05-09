@@ -22,11 +22,22 @@ const bluePowerSlice = createSlice({
       state.value = state.value;
       state.roundValue = 1;
     },
+    copyBlueValue: (state, { payload }) => {
+      state.value = payload;
+      state.roundValue = state.roundValue;
+    },
+    copyBlueRoundValue: (state, { payload }) => {
+      state.value = state.value;
+      state.roundValue = payload;
+    },
   },
 });
 
 export const { blueDecrement,
   blueRoundValueToAll,
-  blueRoundValueIsOne } = bluePowerSlice.actions;
+  blueRoundValueIsOne,
+  copyBlueValue,
+  copyBlueRoundValue,
+} = bluePowerSlice.actions;
 
 export default bluePowerSlice.reducer;

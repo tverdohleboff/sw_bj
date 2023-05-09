@@ -97,7 +97,6 @@ export async function flickerPlayer(steps) {
   }
   document.querySelector('#stopButton').classList.remove('disable');
   document.querySelector('#stopButton').classList.remove('greyColored');
-  document.querySelector('#stopButton').classList.remove('greyColored');
 }
 
 export function getRandomIntInclusive(min, max) {

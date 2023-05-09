@@ -2,21 +2,29 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { save } from '../slices/peoplesSlice';
 import { calculatePower, devour } from '../slices/fountainSlice.js';
-import { decrementCount, decrementRound } from '../slices/roundSlice';
+import {
+  decrementCount,
+  decrementRound,
+  copyCount,
+  copyRound
+} from '../slices/roundSlice';
 import {
   blueDecrement,
   blueRoundValueToAll,
   blueRoundValueIsOne,
+  copyBlueValue,
+  copyBlueRoundValue,
 } from '../slices/bluePower.js';
 import {
   redDecrement,
   redRoundValueToAll,
   redRoundValueIsOne,
+  copyRedValue,
+  copyRedRoundValue,
 } from '../slices/redPower.js';
 import {
   getFromSessionStorage,
   syncWithSessionStorage,
-  checkByDownloadPeople,
   downloadPeople,
   flickerPlayer,
   getRandomIntInclusive,
@@ -63,12 +71,61 @@ function App() {
     }
   }
 
+  const reparoGame = () => {
+    const blueValueFromSessionStorage = getFromSessionStorage('blueValue');
+    const redValueFromSessionStorage = getFromSessionStorage('redValue');
+    const blueRoundValueFromSessionStorage = getFromSessionStorage('blueRoundValue');
+    const redRoundValueFromSessionStorage = getFromSessionStorage('redRoundValue');
+
+    const countForRoundsFromSessionStorage = getFromSessionStorage('countForRounds');
+    const roundFromSessionStorage = getFromSessionStorage('round');
+
+    const nowKeysFromSessionStorage = getFromSessionStorage('nowKeys');
+
+    const status = getFromSessionStorage('statusGame');
+    const isBlueDisabledFromSessionStorage = getFromSessionStorage('isBlueDisabled');
+    const isRedDisabledFromSessionStorage = getFromSessionStorage('isRedDisabled');
+
+    dispatch(copyBlueValue(blueValueFromSessionStorage));
+    dispatch(copyBlueRoundValue(blueRoundValueFromSessionStorage));
+    dispatch(copyRedValue(redValueFromSessionStorage));
+    dispatch(copyRedRoundValue(redRoundValueFromSessionStorage));
+
+    dispatch(copyCount(countForRoundsFromSessionStorage));
+    dispatch(copyRound(roundFromSessionStorage));
+
+    dispatch(calculatePower(nowKeysFromSessionStorage));
+
+    document.querySelector('#startButton').style.display = 'none';
+    document.querySelector('#stopButton').style.display = 'inline';
+
+    const blue = document.querySelector('#playerBlue');
+    const red = document.querySelector('#playerRed');
+
+    if (status === 'Blue') {
+      blue.classList.remove('disable');
+      blue.classList.remove('greyColored');
+    } else if (status === 'Red') {
+      red.classList.remove('disable');
+      red.classList.remove('greyColored');
+    }
+
+    if (isBlueDisabledFromSessionStorage) {
+      document.querySelector('#playerBlue').disabled = true;
+    }
+    if (isRedDisabledFromSessionStorage) {
+      document.querySelector('#playerRed').disabled = true;
+    }
+  }
+
   const isGameEnd = () => {
     const status = getFromSessionStorage('statusGame');
     if (status === 'done') {
       return;
     }
-    //reparoGame();
+    if (status === 'Blue' || status === 'Red') {
+      reparoGame();
+    }
   }
 
   window.onload = function () {
@@ -122,6 +179,14 @@ function App() {
   useEffect(() => {
     syncWithSessionStorage('nowKeys', nowKeys);
   }, [nowKeys]);
+
+  useEffect(() => {
+    syncWithSessionStorage('round', round);
+  }, [round]);
+
+  useEffect(() => {
+    syncWithSessionStorage('countForRounds', countForRounds);
+  }, [countForRounds]);
 
   useEffect(() => {
     syncWithSessionStorage('blueRoundValue', blueRoundValue);
@@ -203,11 +268,6 @@ function App() {
   async function randominaze() {
     const steps = getRandomIntInclusive(3, 6);
     console.log("steps", steps);
-    if (steps % 2) {
-      document.querySelector('#playerBlue').classList.remove('greyColored');
-    } else {
-      document.querySelector('#playerRed').classList.remove('greyColored');
-    }
     flickerPlayer(steps);
   }
 
