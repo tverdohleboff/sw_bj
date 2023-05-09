@@ -9,7 +9,7 @@ const peopleSlice = createSlice({
   initialState,
   reducers: {
     save: (state, { payload }) => {
-      state = state.people.push(payload);
+      state.people = payload;
     },
   },
 });

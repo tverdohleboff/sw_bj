@@ -14,6 +14,8 @@ import {
   redRoundValueIsOne,
 } from '../slices/redPower.js';
 import {
+  getFromSessionStorage,
+  syncWithSessionStorage,
   downloadPeople,
   flickerPlayer,
   getRandomIntInclusive,
@@ -32,6 +34,9 @@ function App() {
       (accumulator, currentValue) => accumulator + currentValue, 0);
     return result;
   });
+
+  const characters = useSelector(({ people }) => people.people);
+
   const blueValue = useSelector((state) => state.bluePower.value);
   const redValue = useSelector((state) => state.redPower.value);
 
@@ -43,6 +48,20 @@ function App() {
 
   const countForRounds = useSelector(({ round }) => round.count);
   const round = useSelector(({ round }) => round.round);
+
+  window.onload = function () {
+    const charactersFromSessionStorage = getFromSessionStorage('characters');
+    if (charactersFromSessionStorage && charactersFromSessionStorage.length > 0) {
+      if (charactersFromSessionStorage.length === characters.length) {
+        console.log('все уже загружено');
+      } else {
+        dispatch(save(charactersFromSessionStorage));
+      }
+      switchToReady();
+      calcStartFountainValues(charactersFromSessionStorage);
+      weAreReady();
+    }
+  }
 
   const switchToReady = () => {
     document.querySelector('.App').classList.add('sameBlack');
@@ -78,6 +97,7 @@ function App() {
     dispatch(save(ready));
     calcStartFountainValues(ready);
     weAreReady();
+    syncWithSessionStorage('characters', ready);
   }
 
   async function calcStartFountainValues(characters) {

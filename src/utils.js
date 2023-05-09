@@ -1,3 +1,12 @@
+export function getFromSessionStorage(key) {
+  return JSON.parse(sessionStorage.getItem(key));
+}
+
+export function syncWithSessionStorage(key, value) {
+  const serializedValue = JSON.stringify(value);
+  sessionStorage.setItem(key, serializedValue);
+}
+
 export async function downloadPeople() {
   const peopleUrl = 'https://swapi.dev/api/people';
   let firstPageData;
