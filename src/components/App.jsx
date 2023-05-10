@@ -39,11 +39,6 @@ import './App.css';
 
 function App() {
   const dispatch = useDispatch();
-  const powerStorage = useSelector((state) => {
-    const result = state.fountain.keys.reduce(
-      (accumulator, currentValue) => accumulator + currentValue, 0);
-    return result;
-  });
 
   const characters = useSelector(({ people }) => people.people);
 
@@ -377,7 +372,7 @@ function App() {
             onClick={(event) => handlePoke(event)}
           >Blue
           </button>
-          <span className='counterPower midText textCenter'>{powerStorage}</span>
+          <span className='counterPower midText textCenter'>{lengthPowerArr}</span>
           <button
             id='playerRed'
             className='button midText disable greyColored'

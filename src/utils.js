@@ -54,7 +54,7 @@ export async function downloadPeople() {
   const peopleRes = peopleMH.map(el => ({
     ...el,
     power: el.massXheight === 666 ? 666 :
-      Math.round((10 / max) * el.massXheight),
+      ((Math.round((10 / max) * el.massXheight)) + 1),
   }));
 
   peopleRes.forEach(el => {
