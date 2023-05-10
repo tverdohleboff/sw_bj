@@ -1,46 +1,34 @@
-# Getting Started with Create React App
+# Карточная игра с использованием SWAPI (Star Wars API)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) TS template.
+Выполнено как тестовое задание со следующими условиями:
 
-## Available Scripts
+Используя swapi.com (http://swapi.com/) необходимо сделать простую карточную игру:
 
-In the project directory, you can run:
+Есть колода из 82 персонажей. (API: /people).
 
-### `npm start`
+У каждого из них появляется показатель силы (strength), который рассчитывается исходя из роста и веса (height и mass). Показатель силы может быть целым числом от 1 до 10, где 10 - соответствует произведению роста и массы самого высокого и увесистого персонажа, а 1 - наоборот, самому легкому и невысокому. Округляем по правилам математики (>=0.5 - в большую сторону, <0.5 - в меньшую).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Игра будет похожа на 21 (очко).
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Всего 2 игрока (синий и красный).
 
-### `npm test`
+Кто ходит первым выбирается случайно.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+В начале каждой игры колода персонажей перемешивается случайным образом.
 
-### `npm run build`
+Тому, кто сейчас ходит, предлагается вытягивать карты из колоды по очереди, чтобы набрать общий показатель силы отряда (strength) близкий или равный 21. Если перебор, то учитывается показатель силы 1.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Далее ход переходит к другому игроку.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Игра продолжается, пока кто-то после завершения своего хода не набрал 63 очка силы (в идеальном случае 3 хода по 21 очку за ход). Этот игрок становится победителем.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Требования к приложению:
+ ⁃ React
+ ⁃ Только функциональные компоненты
+ ⁃ Локальное состояние не используется (useState), используется только глобальное через Redux Toolkit
+ ⁃ Интерфейс и стили любые, но интерфейс игры должен быть интуитивным и наглядным
+ ⁃ При перезагрузке страницы состояние игры не должно сбрасываться.
+ ⁃ Выложить работающее приложение на GitHub Pages.
+ 
+ 
+ // В процессе выполнения обнаружилось, что один из персонажей(Jabba) имеет сильно отличающаюся массу от остальных, чем портит набор «карт». Было решено вынести его как джокера, при его выпадении, игрок сразу же «выигрывает». Шанс — 1/82 на старте и увеличивается, т.к. колода «пустеет».
