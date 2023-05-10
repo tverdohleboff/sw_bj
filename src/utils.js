@@ -89,14 +89,18 @@ export async function flickerPlayer(steps) {
   red.classList.add('greyColored');
 
   if (steps % 2) {
+    syncWithSessionStorage('statusGame', 'Blue');
     blue.classList.remove('disable');
     blue.classList.remove('greyColored');
   } else {
+    syncWithSessionStorage('statusGame', 'Red');
     red.classList.remove('disable');
     red.classList.remove('greyColored');
   }
   document.querySelector('#stopButton').classList.remove('disable');
   document.querySelector('#stopButton').classList.remove('greyColored');
+
+  return (steps % 2) ? 'Blue' : 'Red';
 }
 
 export function getRandomIntInclusive(min, max) {

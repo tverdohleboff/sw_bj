@@ -32,6 +32,7 @@ import {
   blocker,
   winnerByPoints,
 } from '../utils';
+import { saver } from '../slices/whoPlayer.js';
 import Jabba from '../Jabba.webp';
 import MainTitle from '../MainTitle.ogg';
 import './App.css';
@@ -46,17 +47,19 @@ function App() {
 
   const characters = useSelector(({ people }) => people.people);
 
-  const blueValue = useSelector((state) => state.bluePower.value);
-  const redValue = useSelector((state) => state.redPower.value);
+  const blueValue = useSelector(({ bluePower }) => bluePower.value);
+  const redValue = useSelector(({ redPower }) => redPower.value);
 
-  const blueRoundValue = useSelector((state) => state.bluePower.roundValue);
-  const redRoundValue = useSelector((state) => state.redPower.roundValue);
+  const blueRoundValue = useSelector(({ bluePower }) => bluePower.roundValue);
+  const redRoundValue = useSelector(({ redPower }) => redPower.roundValue);
 
   const nowKeys = useSelector(({ fountain }) => fountain.keys);
-  const lengthPowerArr = useSelector((state) => state.fountain.keys.length);
+  const lengthPowerArr = useSelector(({ fountain }) => fountain.keys.length);
 
   const countForRounds = useSelector(({ round }) => round.count);
   const round = useSelector(({ round }) => round.round);
+
+  const playerColor = useSelector(({ whoPlayer }) => whoPlayer.color);
 
   const checkByDownloadPeople = () => {
     const charactersFromSessionStorage = getFromSessionStorage('characters');
@@ -98,6 +101,8 @@ function App() {
 
     document.querySelector('#startButton').style.display = 'none';
     document.querySelector('#stopButton').style.display = 'inline';
+    document.querySelector('#stopButton').classList.remove('disable');
+    document.querySelector('#stopButton').classList.remove('greyColored');
 
     const blue = document.querySelector('#playerBlue');
     const red = document.querySelector('#playerRed');
@@ -105,9 +110,12 @@ function App() {
     if (status === 'Blue') {
       blue.classList.remove('disable');
       blue.classList.remove('greyColored');
+      dispatch(saver('Blue'));
+
     } else if (status === 'Red') {
       red.classList.remove('disable');
       red.classList.remove('greyColored');
+      dispatch(saver('Red'));
     }
 
     if (isBlueDisabledFromSessionStorage) {
@@ -147,6 +155,12 @@ function App() {
   const checkerByPowerLength = () => {
     if (lengthPowerArr === 0) {
       blocker();
+      const blueSum = blueValue + blueRoundValue;
+      const redSum = redValue + redRoundValue;
+      syncWithSessionStorage('blueRoundValue', blueSum);
+      syncWithSessionStorage('redRoundValue', redSum);
+      syncWithSessionStorage('blueRoundValue', 0);
+      syncWithSessionStorage('redRoundValue', 0);
       dispatch(blueRoundValueToAll());
       dispatch(redRoundValueToAll());
       winnerByPoints(blueValue, redValue);
@@ -177,37 +191,36 @@ function App() {
   }
 
   useEffect(() => {
-    syncWithSessionStorage('nowKeys', nowKeys);
+    if (nowKeys.length > 0) {
+      syncWithSessionStorage('nowKeys', nowKeys);
+    }
   }, [nowKeys]);
 
   useEffect(() => {
-    syncWithSessionStorage('round', round);
+    if (nowKeys.round > 0) {
+      syncWithSessionStorage('round', round);
+    }
   }, [round]);
 
   useEffect(() => {
-    syncWithSessionStorage('countForRounds', countForRounds);
-  }, [countForRounds]);
-
-  useEffect(() => {
-    syncWithSessionStorage('blueRoundValue', blueRoundValue);
     if (blueRoundValue > 21) {
+      syncWithSessionStorage('blueRoundValue', 1);
+      syncWithSessionStorage('isBlueDisabled', document.querySelector('#playerBlue').disabled);
       dispatch(blueRoundValueIsOne());
       document.querySelector('#playerBlue').disabled = true;
-      syncWithSessionStorage('isBlueDisabled', document.querySelector('#playerBlue').disabled);
     }
   }, [blueRoundValue]);
 
   useEffect(() => {
-    syncWithSessionStorage('redRoundValue', redRoundValue);
     if (redRoundValue > 21) {
+      syncWithSessionStorage('redRoundValue', 1);
+      syncWithSessionStorage('isRedDisabled', document.querySelector('#playerRed').disabled);
       dispatch(redRoundValueIsOne());
       document.querySelector('#playerRed').disabled = true;
-      syncWithSessionStorage('isRedDisabled', document.querySelector('#playerRed').disabled);
     }
   }, [redRoundValue]);
 
   useEffect(() => {
-    syncWithSessionStorage('blueValue', blueValue);
     if (blueValue >= 63) {
       blocker();
       winners('blue');
@@ -216,7 +229,6 @@ function App() {
   }, [blueValue]);
 
   useEffect(() => {
-    syncWithSessionStorage('redValue', redValue);
     if (redValue >= 63) {
       blocker();
       winners('red');
@@ -246,8 +258,12 @@ function App() {
     const currentPower = nowKeys[index];
     console.log("currentPower:", currentPower);
     if (target.innerHTML === 'Blue') {
+      const blueSum = blueRoundValue + currentPower;
+      syncWithSessionStorage('blueRoundValue', blueSum);
       dispatch(blueDecrement(currentPower));
     } else if (target.innerHTML === 'Red') {
+      const redSum = redRoundValue + currentPower;
+      syncWithSessionStorage('redRoundValue', redSum);
       dispatch(redDecrement(currentPower));
     }
     dispatch(devour(index));
@@ -268,18 +284,35 @@ function App() {
   async function randominaze() {
     const steps = getRandomIntInclusive(3, 6);
     console.log("steps", steps);
-    flickerPlayer(steps);
+    const color = await flickerPlayer(steps);
+    dispatch(saver(color));
   }
 
   const handleStop = () => {
     switchPlayer();
+    const blueSum = blueValue + blueRoundValue;
+    syncWithSessionStorage('blueValue', blueSum);
+    syncWithSessionStorage('blueRoundValue', 0);
+    const redSum = redValue + redRoundValue;
+    syncWithSessionStorage('redValue', redSum);
+    syncWithSessionStorage('redRoundValue', 0);
+
     dispatch(blueRoundValueToAll());
     dispatch(redRoundValueToAll());
     document.querySelector('#playerBlue').disabled = false;
     document.querySelector('#playerRed').disabled = false;
+    const countSum = countForRounds + 1;
+    syncWithSessionStorage('countForRounds', countSum);
     dispatch(decrementCount());
     syncWithSessionStorage('isBlueDisabled', document.querySelector('#playerBlue').disabled);
     syncWithSessionStorage('isRedDisabled', document.querySelector('#playerRed').disabled);
+    if (playerColor === 'Blue') {
+      syncWithSessionStorage('statusGame', 'Red');
+      dispatch(saver('Red'));
+    } else if (playerColor === 'Red') {
+      syncWithSessionStorage('statusGame', 'Blue');
+      dispatch(saver('Blue'));
+    }
   }
 
   async function handleStart() {
@@ -287,6 +320,12 @@ function App() {
     await randominaze();
     document.querySelector('#startButton').style.display = 'none';
     document.querySelector('#stopButton').style.display = 'inline';
+    syncWithSessionStorage('blueValue', 0);
+    syncWithSessionStorage('redValue', 0);
+    syncWithSessionStorage('blueRoundValue', 0);
+    syncWithSessionStorage('redRoundValue', 0);
+    syncWithSessionStorage('round', 1);
+    syncWithSessionStorage('countForRounds', 0);
   }
 
   const audio = document.querySelector("#myAudio");
