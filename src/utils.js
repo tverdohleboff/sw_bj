@@ -65,7 +65,6 @@ export async function downloadPeople() {
       peopleMap.set(el.power, 1);
     }
   });
-  console.log(peopleMap);
   result = [...peopleRes];
   return result;
 };

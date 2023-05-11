@@ -201,7 +201,6 @@ function App() {
   async function savePeople() {
     switchToReady();
     const ready = await downloadPeople();
-    console.log(ready);
     dispatch(save(ready));
     calcStartFountainValues(ready);
     weAreReady();
@@ -210,7 +209,6 @@ function App() {
 
   async function calcStartFountainValues(characters) {
     const fountainArr = characters.map(item => item.power);
-    console.log("fountainArr", fountainArr);
     dispatch(calculatePower(fountainArr));
   }
 
@@ -282,13 +280,8 @@ function App() {
   }, [blueRoundValue, redRoundValue]);
 
   async function handlePoke({ target }) {
-    console.log(target.innerHTML);
-    console.log("lengthPowerArr:", lengthPowerArr);
     const index = await getRandomIntInclusive(0, lengthPowerArr - 1);
-    console.log("index:", index);
-    console.log("nowKeys:", nowKeys);
     const currentPower = nowKeys[index];
-    console.log("currentPower:", currentPower);
     if (target.innerHTML === 'Blue') {
       const blueSum = blueRoundValue + currentPower;
       syncWithSessionStorage('blueRoundValue', blueSum);
@@ -342,7 +335,6 @@ function App() {
 
   async function randominaze() {
     const steps = getRandomIntInclusive(3, 6);
-    console.log("steps", steps);
     const color = await flickerPlayer(steps);
     dispatch(saver(color));
   }
