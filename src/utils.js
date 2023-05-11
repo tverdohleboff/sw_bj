@@ -152,18 +152,24 @@ export function winners(player) {
 export function winnerByPoints(blueValue, redValue) {
   document.querySelector("#win").style.display = "inline";
   document.querySelector("#game").style.display = "none";
+  let result;
   if (blueValue > redValue) {
     document.querySelector('#winTitle').textContent = `Blue WINS!`;
     document.querySelector('.App').classList.add('sameBlue');
+    result = 'blue';
   } else if (redValue > blueValue) {
     document.querySelector('#winTitle').textContent = `RED WINS!`;
     document.querySelector('.App').classList.add('sameRed');
+    result = 'red';
   } else if (blueValue === redValue) {
     document.querySelector('#winTitle').textContent = `FRIENDSHIPS!`;
     document.querySelector('.App').classList.add('sameGreen');
+    result = 'blue';
   } else {
     document.querySelector('#winTitle').textContent = `Impossible! You WIN!`;
     document.querySelector('.App').classList.add('sameWin');
+    result = 'blue';
   }
   syncWithSessionStorage('statusGame', 'done');
+  return result;
 }

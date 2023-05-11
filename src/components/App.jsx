@@ -35,6 +35,7 @@ import {
 import { saver } from '../slices/whoPlayer.js';
 import Jabba from '../Jabba.webp';
 import MainTitle from '../MainTitle.ogg';
+import Imperial_March from '../Imperial_March.ogg';
 import './App.css';
 
 function App() {
@@ -55,6 +56,14 @@ function App() {
   const round = useSelector(({ round }) => round.round);
 
   const playerColor = useSelector(({ whoPlayer }) => whoPlayer.color);
+
+  const roundValue = blueRoundValue !== 0 ? blueRoundValue :
+    redRoundValue !== 0 ? redRoundValue : 0;
+
+  const blue = document.querySelector('#playerBlue');
+  const red = document.querySelector('#playerRed');
+
+  let whoWin;
 
   const checkByDownloadPeople = () => {
     const charactersFromSessionStorage = getFromSessionStorage('characters');
@@ -84,6 +93,9 @@ function App() {
     const isBlueDisabledFromSessionStorage = getFromSessionStorage('isBlueDisabled');
     const isRedDisabledFromSessionStorage = getFromSessionStorage('isRedDisabled');
 
+    const isBlueGreyColoredFromSessionStorage = getFromSessionStorage('isBlueGreyColored');
+    const isRedGreyColoredFromSessionStorage = getFromSessionStorage('isRedGreyColored');
+
     dispatch(copyBlueValue(blueValueFromSessionStorage));
     dispatch(copyBlueRoundValue(blueRoundValueFromSessionStorage));
     dispatch(copyRedValue(redValueFromSessionStorage));
@@ -103,21 +115,30 @@ function App() {
     const red = document.querySelector('#playerRed');
 
     if (status === 'Blue') {
+      dispatch(saver('Blue'));
       blue.classList.remove('disable');
       blue.classList.remove('greyColored');
-      dispatch(saver('Blue'));
+
 
     } else if (status === 'Red') {
+      dispatch(saver('Red'));
       red.classList.remove('disable');
       red.classList.remove('greyColored');
-      dispatch(saver('Red'));
+
     }
 
     if (isBlueDisabledFromSessionStorage) {
-      document.querySelector('#playerBlue').disabled = true;
+      blue.disabled = true;
     }
     if (isRedDisabledFromSessionStorage) {
-      document.querySelector('#playerRed').disabled = true;
+      red.disabled = true;
+    }
+
+    if (isBlueGreyColoredFromSessionStorage) {
+      blue.classList.add('greyColored');
+    }
+    if (isRedGreyColoredFromSessionStorage) {
+      red.classList.add('greyColored');
     }
   }
 
@@ -134,6 +155,14 @@ function App() {
   window.onload = function () {
     checkByDownloadPeople();
     isGameEnd();
+    audioVolume();
+  }
+
+  const audioVolume = () => {
+    const blueAudio = document.querySelector("#blueAudio");
+    const redAudio = document.querySelector("#redAudio");
+    blueAudio.volume = 0.3;
+    redAudio.volume = 0.4;
   }
 
   const switchToReady = () => {
@@ -158,8 +187,8 @@ function App() {
       syncWithSessionStorage('redRoundValue', 0);
       dispatch(blueRoundValueToAll());
       dispatch(redRoundValueToAll());
-      winnerByPoints(blueValue, redValue);
-      playAudio();
+      whoWin = winnerByPoints(blueValue, redValue);
+      playAudio(whoWin);
     }
   }
 
@@ -200,18 +229,22 @@ function App() {
   useEffect(() => {
     if (blueRoundValue > 21) {
       syncWithSessionStorage('blueRoundValue', 1);
-      syncWithSessionStorage('isBlueDisabled', document.querySelector('#playerBlue').disabled);
+      syncWithSessionStorage('isBlueDisabled', true);
+      syncWithSessionStorage('isBlueGreyColored', true);
       dispatch(blueRoundValueIsOne());
-      document.querySelector('#playerBlue').disabled = true;
+      blue.disabled = true;
+      blue.classList.add('greyColored');
     }
   }, [blueRoundValue]);
 
   useEffect(() => {
     if (redRoundValue > 21) {
       syncWithSessionStorage('redRoundValue', 1);
-      syncWithSessionStorage('isRedDisabled', document.querySelector('#playerRed').disabled);
+      syncWithSessionStorage('isRedDisabled', true);
+      syncWithSessionStorage('isRedGreyColored', true);
       dispatch(redRoundValueIsOne());
-      document.querySelector('#playerRed').disabled = true;
+      red.disabled = true;
+      red.classList.add('greyColored');
     }
   }, [redRoundValue]);
 
@@ -219,7 +252,8 @@ function App() {
     if (blueValue >= 63) {
       blocker();
       winners('blue');
-      playAudio();
+      playAudio('blue');
+      whoWin = 'blue';
     }
   }, [blueValue]);
 
@@ -227,7 +261,8 @@ function App() {
     if (redValue >= 63) {
       blocker();
       winners('red');
-      playAudio();
+      playAudio('red');
+      whoWin = 'red';
     }
   }, [redValue]);
 
@@ -235,12 +270,14 @@ function App() {
     if (blueRoundValue >= 666) {
       blocker();
       winners('blueJabba');
-      playAudio();
+      playAudio('blue');
+      whoWin = 'blue';
     }
     if (redRoundValue >= 666) {
       blocker();
       winners('redJabba');
-      playAudio();
+      playAudio('red');
+      whoWin = 'red';
     }
   }, [blueRoundValue, redRoundValue]);
 
@@ -267,13 +304,40 @@ function App() {
   }
 
   const switchPlayer = () => {
-    const blue = document.querySelector('#playerBlue');
-    const red = document.querySelector('#playerRed');
+    blue.disabled = false;
+    red.disabled = false;
+    syncWithSessionStorage('isBlueDisabled', false);
+    syncWithSessionStorage('isRedDisabled', false);
 
-    blue.classList.toggle('disable');
-    blue.classList.toggle('greyColored');
-    red.classList.toggle('disable');
-    red.classList.toggle('greyColored');
+    if (playerColor === 'Blue') {
+      const blueSum = blueValue + blueRoundValue;
+      syncWithSessionStorage('blueValue', blueSum);
+      syncWithSessionStorage('blueRoundValue', 0);
+
+      dispatch(blueRoundValueToAll());
+
+      blue.classList.add('disable');
+      blue.classList.add('greyColored');
+      red.classList.remove('disable');
+      red.classList.remove('greyColored');
+
+      syncWithSessionStorage('statusGame', 'Red');
+      dispatch(saver('Red'));
+    } else if (playerColor === 'Red') {
+      const redSum = redValue + redRoundValue;
+      syncWithSessionStorage('redValue', redSum);
+      syncWithSessionStorage('redRoundValue', 0);
+
+      dispatch(redRoundValueToAll());
+
+      blue.classList.remove('disable');
+      blue.classList.remove('greyColored');
+      red.classList.add('disable');
+      red.classList.add('greyColored');
+
+      syncWithSessionStorage('statusGame', 'Blue');
+      dispatch(saver('Blue'));
+    }
   }
 
   async function randominaze() {
@@ -285,29 +349,9 @@ function App() {
 
   const handleStop = () => {
     switchPlayer();
-    const blueSum = blueValue + blueRoundValue;
-    syncWithSessionStorage('blueValue', blueSum);
-    syncWithSessionStorage('blueRoundValue', 0);
-    const redSum = redValue + redRoundValue;
-    syncWithSessionStorage('redValue', redSum);
-    syncWithSessionStorage('redRoundValue', 0);
-
-    dispatch(blueRoundValueToAll());
-    dispatch(redRoundValueToAll());
-    document.querySelector('#playerBlue').disabled = false;
-    document.querySelector('#playerRed').disabled = false;
     const countSum = countForRounds + 1;
     syncWithSessionStorage('countForRounds', countSum);
     dispatch(decrementCount());
-    syncWithSessionStorage('isBlueDisabled', document.querySelector('#playerBlue').disabled);
-    syncWithSessionStorage('isRedDisabled', document.querySelector('#playerRed').disabled);
-    if (playerColor === 'Blue') {
-      syncWithSessionStorage('statusGame', 'Red');
-      dispatch(saver('Red'));
-    } else if (playerColor === 'Red') {
-      syncWithSessionStorage('statusGame', 'Blue');
-      dispatch(saver('Blue'));
-    }
   }
 
   async function handleStart() {
@@ -323,14 +367,21 @@ function App() {
     syncWithSessionStorage('countForRounds', 0);
   }
 
-  const audio = document.querySelector("#myAudio");
+  const blueAudio = document.querySelector("#blueAudio");
+  const redAudio = document.querySelector("#redAudio");
 
-  const playAudio = () => {
-    audio.play();
+  const playAudio = (player) => {
+    player = typeof player !== 'undefined' ? player : whoWin;
+    if (player === 'blue') {
+      blueAudio.play();
+    } else if (player === 'red') {
+      redAudio.play();
+    }
   }
 
   const pauseAudio = () => {
-    audio.pause();
+    blueAudio.pause();
+    redAudio.pause();
   }
 
   return (
@@ -346,8 +397,11 @@ function App() {
           <div>O</div>
           <div>L</div>
         </div>
-        <audio id="myAudio">
+        <audio id="blueAudio">
           <source src={MainTitle} type="audio/ogg" />
+        </audio>
+        <audio id="redAudio">
+          <source src={Imperial_March} type="audio/ogg" />
         </audio>
         <button
           className='downloadButton button bigText'
@@ -364,7 +418,6 @@ function App() {
         <div className='gameTable'>
           <div className='playerValues'>
             <span className='bluePower midText textCenter'>{blueValue}</span>
-            <span className='bluePower midText textCenter'>{blueRoundValue}</span>
           </div>
           <button
             id='playerBlue'
@@ -381,8 +434,11 @@ function App() {
           </button>
           <div className='playerValues'>
             <span className='redPower midText textCenter'>{redValue}</span>
-            <span className='redPower midText textCenter'>{redRoundValue}</span>
           </div>
+
+        </div>
+        <div>
+          <span className='bluePower midText textCenter'>{roundValue}</span>
         </div>
         <button
           id='stopButton'
