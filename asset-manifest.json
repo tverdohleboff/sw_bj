@@ -1,15 +1,16 @@
 {
   "files": {
-    "main.css": "/sw_bj/static/css/main.0700efe3.css",
-    "main.js": "/sw_bj/static/js/main.c9df0bfd.js",
+    "main.css": "/sw_bj/static/css/main.5e967924.css",
+    "main.js": "/sw_bj/static/js/main.bb2c14ed.js",
     "static/media/MainTitle.ogg": "/sw_bj/static/media/MainTitle.6cf98f672c4a91e75b05.ogg",
+    "static/media/Imperial_March.ogg": "/sw_bj/static/media/Imperial_March.2a86e0e39114369ba7e7.ogg",
     "static/media/Jabba.webp": "/sw_bj/static/media/Jabba.374733a345d1870c0279.webp",
     "index.html": "/sw_bj/index.html",
-    "main.0700efe3.css.map": "/sw_bj/static/css/main.0700efe3.css.map",
-    "main.c9df0bfd.js.map": "/sw_bj/static/js/main.c9df0bfd.js.map"
+    "main.5e967924.css.map": "/sw_bj/static/css/main.5e967924.css.map",
+    "main.bb2c14ed.js.map": "/sw_bj/static/js/main.bb2c14ed.js.map"
   },
   "entrypoints": [
-    "static/css/main.0700efe3.css",
-    "static/js/main.c9df0bfd.js"
+    "static/css/main.5e967924.css",
+    "static/js/main.bb2c14ed.js"
   ]
 }
